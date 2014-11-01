@@ -1,0 +1,42 @@
+{
+  "name": "sweetp-project-workflow",
+  "version": "0.1.0",
+  "main": "main.js",
+  "description": "Sweetp service for workflow actions within a project.",
+  "homepage": "https://github.com/hoschi/sweetp-service-project-workflow",
+  "bugs": "https://github.com/hoschi/sweetp-service-project-workflow/issues",
+  "author": {
+    "name": "Stefan Gojan",
+    "email": "vollekannehoschi@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hoschi/sweetp-service-project-workflow"
+  },
+  "license": "MIT",
+  "keywords": [
+    "sweetp",
+    "git"
+  ],
+  "devDependencies": {
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-codeclimate": "0.0.1-1",
+    "load-grunt-tasks": "^0.4.0",
+    "time-grunt": "^0.3.1",
+    "jshint-stylish": "^0.2.0",
+    "grunt-mocha-cov": "~0.2.1",
+    "chai": "~1.9.1"
+  },
+  "dependencies": {
+    "sweetp-base": "~0.6",
+    "lodash": "~2.4.1"
+  },
+  "config": {
+    "blanket": {
+      "pattern": [
+        "src"
+      ]
+    }
+  }
+}
