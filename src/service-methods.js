@@ -10,6 +10,7 @@ exports.createContextBranch = {
 		params: {
 			url: sweetp.PARAMETER_TYPES.url,
 			config: sweetp.PARAMETER_TYPES.projectConfig,
+			context: sweetp.PARAMETER_TYPES.one
 		},
 		description: {
 			summary: "Create a new branch for a context and safe its ancestor."
@@ -18,3 +19,4 @@ exports.createContextBranch = {
 	},
 	fn: service.createContextBranch
 };
+

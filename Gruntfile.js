@@ -26,7 +26,7 @@ module.exports = function (grunt) {
 		codeclimate: {
 			options: {
 				file: 'reports/coverage.lcov',
-				token: '' // TODO put it in
+				token: '8acc90d42c3563cb3140f24c434810796cb6d7663e3c50187945ae2e18ceddd1'
 			}
 		},
 		mochacov: {
@@ -74,5 +74,5 @@ module.exports = function (grunt) {
 	grunt.registerTask('codec', ['mochacov:lcov', 'codeclimate']);
 	grunt.registerTask('test', ['mochacov:unit']);
 	grunt.registerTask('default', ['jshint', 'test']);
-	grunt.registerTask('ci', ['jshint', 'test', 'codec']);
 };
+
