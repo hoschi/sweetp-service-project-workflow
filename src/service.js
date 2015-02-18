@@ -22,6 +22,16 @@ function createSuccessCallbackForMessage (callback, message) {
 	};
 }
 
+function callServiceWithBranchName (branchName, params, callService, callback) {
+	if (!branchName) {
+		return callback("No name for branch");
+	}
+	params.name = branchName;
+	params.force = false;
+
+	callService(params, false, callback);
+}
+
 exports.createContextBranch = function (params, callback) {
 	var projectName, context, sweetpServerUrl, steps;
 
@@ -84,34 +94,22 @@ exports.saveAncestor = function (sweetpServerUrl, projectName, context, callback
 };
 
 exports.createBranch = function (sweetpServerUrl, projectName, context, callback) {
-	var callService, params;
-
-	if (!context.branchName) {
-		return callback("No name for branch to create!");
-	}
-
-	params = {
-		name: context.branchName,
-		force: false
-	};
+	var callService, callbackWithMessage;
 
 	callService = getCallService(sweetpServerUrl, projectName);
-	callService("scm/branch/create", params, false, createSuccessCallbackForMessage(callback, "Branch '" + context.branchName + "' created if not already existed"));
+	callService = _.partial(callService, "scm/branch/create");
+	callbackWithMessage = createSuccessCallbackForMessage(callback, "Branch '" + context.branchName + "' created if not already existed");
+
+	callServiceWithBranchName(context.branchName, {}, callService, callbackWithMessage);
 };
 
 exports.checkoutBranch = function (sweetpServerUrl, projectName, context, callback) {
-	var callService, params;
-
-	if (!context.branchName) {
-		return callback("No name for branch to checkout!");
-	}
-
-	params = {
-		name: context.branchName,
-		force: false
-	};
+	var callService, callbackWithMessage;
 
 	callService = getCallService(sweetpServerUrl, projectName);
-	callService("scm/checkout", params, false, createSuccessCallbackForMessage(callback, "Switched to branch '" + context.branchName + "'"));
+	callService = _.partial(callService, "scm/checkout");
+	callbackWithMessage = createSuccessCallbackForMessage(callback, "Switched to branch '" + context.branchName + "'");
+
+	callServiceWithBranchName(context.branchName, {}, callService, callbackWithMessage);
 };
 

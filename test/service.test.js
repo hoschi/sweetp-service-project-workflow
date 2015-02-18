@@ -42,7 +42,7 @@ describe('Method to create branch for context', function () {
 
 	it('should fail without branch name.', function (done) {
 		s.createBranch(params.url, params.config.name, {}, function (err) {
-			err.should.equal("No name for branch to create!");
+			err.should.equal("No name for branch");
 			done();
 		});
 	});
@@ -92,7 +92,7 @@ describe('Method to checkout branch for context', function () {
 
 	it('should fail without branch name.', function (done) {
 		s.checkoutBranch(params.url, params.config.name, {}, function (err) {
-			err.should.equal("No name for branch to checkout!");
+			err.should.equal("No name for branch");
 			done();
 		});
 	});
