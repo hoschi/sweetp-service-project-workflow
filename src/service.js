@@ -22,14 +22,21 @@ function createSuccessCallbackForMessage (callback, message) {
 	};
 }
 
-function callServiceWithBranchName (branchName, params, callService, callback) {
-	if (!branchName) {
+function callServiceWithBranchName (sweetpServerUrl, projectName, context, serviceName, successMessage, callback) {
+	var params, callService, callbackWithMessage;
+
+	if (!context.branchName) {
 		return callback("No name for branch");
 	}
-	params.name = branchName;
+
+	params = {};
+	params.name = context.branchName;
 	params.force = false;
 
-	callService(params, false, callback);
+	callService = getCallService(sweetpServerUrl, projectName);
+	callbackWithMessage = createSuccessCallbackForMessage(callback, successMessage);
+
+	callService(serviceName, params, false, callbackWithMessage);
 }
 
 exports.createContextBranch = function (params, callback) {
@@ -94,22 +101,10 @@ exports.saveAncestor = function (sweetpServerUrl, projectName, context, callback
 };
 
 exports.createBranch = function (sweetpServerUrl, projectName, context, callback) {
-	var callService, callbackWithMessage;
-
-	callService = getCallService(sweetpServerUrl, projectName);
-	callService = _.partial(callService, "scm/branch/create");
-	callbackWithMessage = createSuccessCallbackForMessage(callback, "Branch '" + context.branchName + "' created if not already existed");
-
-	callServiceWithBranchName(context.branchName, {}, callService, callbackWithMessage);
+	callServiceWithBranchName(sweetpServerUrl, projectName, context, "scm/branch/create", "Branch '" + context.branchName + "' created if not already existed", callback);
 };
 
 exports.checkoutBranch = function (sweetpServerUrl, projectName, context, callback) {
-	var callService, callbackWithMessage;
-
-	callService = getCallService(sweetpServerUrl, projectName);
-	callService = _.partial(callService, "scm/checkout");
-	callbackWithMessage = createSuccessCallbackForMessage(callback, "Switched to branch '" + context.branchName + "'");
-
-	callServiceWithBranchName(context.branchName, {}, callService, callbackWithMessage);
+	callServiceWithBranchName(sweetpServerUrl, projectName, context, "scm/checkout", "Switched to branch '" + context.branchName + "'", callback);
 };
 
