@@ -20,3 +20,18 @@ exports.createContextBranch = {
 	fn: service.createContextBranch
 };
 
+exports.saveBranchName = {
+	options: {
+		params: {
+			url: sweetp.PARAMETER_TYPES.url,
+			config: sweetp.PARAMETER_TYPES.projectConfig,
+			context: sweetp.PARAMETER_TYPES.one
+		},
+		description: {
+			summary: "Save branch name for context. This leads to 'feature/ID' where 'ID' is the `ticketId` property of the context"
+		},
+		returns: "string"
+	},
+	fn: service.saveBranchName
+};
+

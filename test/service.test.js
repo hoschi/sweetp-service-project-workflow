@@ -315,3 +315,54 @@ describe('Method to create a branch for a given context', function () {
 
 });
 
+describe('Method to save branch name', function () {
+	var params;
+	params = _.cloneDeep(baseParams);
+
+	it('should fail without context.', function (done) {
+		s.saveBranchName(params, function (err) {
+			err.should.equal("Can't work without context!");
+			done();
+		});
+	});
+
+	it('should fail without ticket id.', function (done) {
+		params.context = JSON.stringify({
+			thisIsNotTheTicketId: 42
+		});
+
+		s.saveBranchName(params, function (err) {
+			err.should.equal("Can't work without ticket id, there is no `ticketId` property in given context!");
+			done();
+		});
+	});
+
+	it('should return info message when all went fine.', function (done) {
+		var branchName;
+
+		// expected branch name
+		branchName = 'feature/42';
+
+		// create fake context
+		params.context = JSON.stringify({
+			_id: "contextId",
+			ticketId: 42
+		});
+
+		// mock call which saves branch name in context
+		mockSweetpServiceCall(params, 'project-context/patchContext', {
+			id: "contextId",
+			properties: JSON.stringify({
+				branchName: branchName
+			})
+		});
+
+		s.saveBranchName(params, function (err, message) {
+			should.not.exist(err);
+			message.should.equal("Saved branch name '" + branchName + "' in context.");
+			done();
+		});
+	});
+
+});
+
