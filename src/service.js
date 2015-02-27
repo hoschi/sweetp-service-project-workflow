@@ -78,6 +78,11 @@ exports.saveBranchName = function (params, callback) {
 		return callback("Can't work without ticket id, there is no `ticketId` property in given context!");
 	}
 
+	// don't override existing branch name, e.g. supplied by user
+	if (params.context.branchName) {
+		return callback(undefined, "Nothing done, branch name already exists in context: '" + params.context.branchName + "'");
+	}
+
 	// create branch name by static string + ticket id
 	branchName = 'feature/' + params.context.ticketId.toString();
 	patchedContextProperties = {

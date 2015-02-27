@@ -337,7 +337,7 @@ describe('Method to save branch name', function () {
 		});
 	});
 
-	it('should return info message when all went fine.', function (done) {
+	it('should return info message when context was patched.', function (done) {
 		var branchName;
 
 		// expected branch name
@@ -360,6 +360,21 @@ describe('Method to save branch name', function () {
 		s.saveBranchName(params, function (err, message) {
 			should.not.exist(err);
 			message.should.equal("Saved branch name '" + branchName + "' in context.");
+			done();
+		});
+	});
+
+	it('should do nothing when branch name already exists in context.', function (done) {
+		// create fake context
+		params.context = JSON.stringify({
+			_id: "contextId",
+			ticketId: 42,
+			branchName: "myCustomizedBranchName"
+		});
+
+		s.saveBranchName(params, function (err, message) {
+			should.not.exist(err);
+			message.should.equal("Nothing done, branch name already exists in context: 'myCustomizedBranchName'");
 			done();
 		});
 	});
