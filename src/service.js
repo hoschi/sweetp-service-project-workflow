@@ -1,11 +1,7 @@
 var sweetp = require('sweetp-base');
+var log = require('sweetp-base/lib/log')('project-workflow:internal:');
 var _ = require('lodash');
 var async = require('async');
-var debug = require('debug');
-var log = {};
-['debug', 'error', 'log', 'warn', 'info'].forEach(function (level) {
-	log[level] = debug('project-workflow:internal:' + level);
-});
 
 // get function to call a sweetp service
 function  getCallService (sweetpServerUrl, projectName) {
