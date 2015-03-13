@@ -26,15 +26,15 @@ function createSuccessCallbackForMessage (callback, message) {
 }
 
 // call service with branch name already defined
-function callServiceWithBranchName (sweetpServerUrl, projectName, context, serviceName, successMessage, callback) {
+function callServiceWithBranchName (sweetpServerUrl, projectName, branchName, serviceName, successMessage, callback) {
 	var params, callService, callbackWithMessage;
 
-	if (!context.branchName) {
+	if (!branchName) {
 		return callback("No name for branch");
 	}
 
 	params = {};
-	params.name = context.branchName;
+	params.name = branchName;
 	params.force = false;
 
 	callService = getCallService(sweetpServerUrl, projectName);
@@ -145,10 +145,23 @@ exports.saveAncestor = function (sweetpServerUrl, projectName, context, callback
 };
 
 exports.createBranch = function (sweetpServerUrl, projectName, context, callback) {
-	callServiceWithBranchName(sweetpServerUrl, projectName, context, "scm/branch/create", "Branch '" + context.branchName + "' created if not already existed", callback);
+	callServiceWithBranchName(sweetpServerUrl, projectName, context.branchName, "scm/branch/create", "Branch '" + context.branchName + "' created if not already existed", callback);
 };
 
 exports.checkoutBranch = function (sweetpServerUrl, projectName, context, callback) {
-	callServiceWithBranchName(sweetpServerUrl, projectName, context, "scm/checkout", "Switched to branch '" + context.branchName + "'", callback);
+	callServiceWithBranchName(sweetpServerUrl, projectName, context.branchName, "scm/checkout", "Switched to branch '" + context.branchName + "'", callback);
 };
+
+exports.checkoutBranchAncestor = function (params, callback) {
+	var branchName;
+
+	if (!params.context.branchAncestor) {
+		return callback("Can't work without ancestor branch name, there is no `branchAncestor` property in given context!");
+	}
+	branchName = params.context.branchAncestor;
+
+	callServiceWithBranchName(params.url, params.config.name, branchName, "scm/checkout", "Switched to branch '" + branchName + "'", callback);
+};
+// add assertion
+exports.checkoutBranchAncestor = needsContextInParams(exports.checkoutBranchAncestor);
 

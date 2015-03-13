@@ -381,3 +381,52 @@ describe('Method to save branch name', function () {
 
 });
 
+describe('Method to switch to ancestor branch of context', function () {
+	var params;
+	params = _.cloneDeep(baseParams);
+
+	it('should fail without context.', function (done) {
+		s.checkoutBranchAncestor(params, function (err) {
+			err.should.equal("Can't work without context!");
+			done();
+		});
+	});
+
+	it('should fail without branchAncestor property.', function (done) {
+		params.context = JSON.stringify({
+			thisIsNotTheTicketId: 42
+		});
+
+		s.checkoutBranchAncestor(params, function (err) {
+			err.should.equal("Can't work without ancestor branch name, there is no `branchAncestor` property in given context!");
+			done();
+		});
+	});
+
+	it('should return info message when branch was switched.', function (done) {
+		var branchName;
+
+		// ancestor branch name
+		branchName = 'develop';
+
+		// mock context
+		params.context = JSON.stringify({
+			branchAncestor: branchName
+		});
+
+		// mock call which switch branches
+		mockSweetpServiceCall(params, 'scm/checkout', {
+			name: branchName,
+			force: false
+		}, false);
+
+		s.checkoutBranchAncestor(params, function (err, message) {
+			should.not.exist(err);
+			message.should.contain(branchName);
+			message.should.match(/^Switched to branch/);
+			done();
+		});
+	});
+
+});
+
