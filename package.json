@@ -27,7 +27,9 @@
     "chai": "~1.9.1",
     "sinon": "~1.10.3",
     "grunt-codeclimate": "0.0.1-1",
-    "nock": "~0.46.0"
+    "nock": "~0.46.0",
+    "esformatter-braces": "~1.0.0",
+    "esformatter-semicolons": "~1.0.3"
   },
   "dependencies": {
     "sweetp-base": "~1.0.0",
