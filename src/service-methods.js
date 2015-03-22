@@ -49,4 +49,3 @@ exports.checkoutBranchAncestor = {
 	},
 	fn: service.checkoutBranchAncestor
 };
-

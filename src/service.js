@@ -164,4 +164,3 @@ exports.checkoutBranchAncestor = function (params, callback) {
 };
 // add assertion
 exports.checkoutBranchAncestor = needsContextInParams(exports.checkoutBranchAncestor);
-

@@ -429,4 +429,3 @@ describe('Method to switch to ancestor branch of context', function () {
 	});
 
 });
-
