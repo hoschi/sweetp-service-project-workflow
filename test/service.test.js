@@ -83,7 +83,6 @@ describe('Method to create branch for context', function () {
 				done();
 			});
 	});
-
 });
 
 describe('Method to checkout branch for context', function () {
@@ -133,12 +132,14 @@ describe('Method to checkout branch for context', function () {
 				done();
 			});
 	});
-
 });
 
 describe('Method to save ancestor branch name in context', function () {
 	var params;
-	params = _.cloneDeep(baseParams);
+
+	beforeEach(function () {
+		params = _.cloneDeep(baseParams);
+	});
 
 	it('should fail with service call error, when try to get current branch name.', function (done) {
 		var branchName;
@@ -159,8 +160,8 @@ describe('Method to save ancestor branch name in context', function () {
 			});
 	});
 
-	it('should fail with service call error, when try to patch context.', function (done) {
-		var branchName;
+	it('should return info message when all went fine and save branch name in context.', function (done) {
+		var branchName, context;
 
 		branchName = 'feature/myTest24';
 
@@ -171,51 +172,18 @@ describe('Method to save ancestor branch name in context', function () {
 				service: branchName
 			});
 
-		mockSweetpServiceCall(params, 'project-context/patchContext', {
-			id: "contextId",
-			properties: JSON.stringify({
-				branchAncestor: branchName
-			})
-		}, true);
-
-		s.saveAncestor(params.url, params.config.name, {
+		context = {
 			_id: "contextId",
-		}, function (err) {
-				err.message.should.contain("during call to service");
-				err.message.should.contain("patchContext");
-				done();
-			});
-	});
+		};
 
-	it('should return info message when all went fine.', function (done) {
-		var branchName;
-
-		branchName = 'feature/myTest24';
-
-		// fake current branch name
-		nock(params.url)
-			.get('/services/' + params.config.name + '/scm/branch/name')
-			.reply(200, {
-				service: branchName
-			});
-
-		mockSweetpServiceCall(params, 'project-context/patchContext', {
-			id: "contextId",
-			properties: JSON.stringify({
-				branchAncestor: branchName
-			})
+		s.saveAncestor(params.url, params.config.name, context, function (err, message) {
+			should.not.exist(err);
+			message.should.contain(branchName);
+			message.should.match(/Ancestor .* saved/);
+			context.branchAncestor.should.equal(branchName);
+			done();
 		});
-
-		s.saveAncestor(params.url, params.config.name, {
-			_id: "contextId",
-		}, function (err, message) {
-				should.not.exist(err);
-				message.should.contain(branchName);
-				message.should.match(/Ancestor .* saved/);
-				done();
-			});
 	});
-
 });
 
 describe('Method to create a branch for a given context', function () {
@@ -276,10 +244,11 @@ describe('Method to create a branch for a given context', function () {
 			.callsArgWith(3, undefined, "Branch switched");
 
 		params.context = JSON.stringify(context);
-		s.createContextBranch(params, function (err, message) {
-			should.not.exist(err);
-			message.should.equal("Saved ancestor, Branch created, Branch switched");
+		s.createContextBranch(params, function (err, response) {
 			ms.verify();
+			ms.restore();
+			should.not.exist(err);
+			response.msg.should.equal("Saved ancestor, Branch created, Branch switched");
 			done();
 		});
 	});
@@ -305,14 +274,14 @@ describe('Method to create a branch for a given context', function () {
 			.callsArgWith(3, undefined, "Branch switched");
 
 		params.context = JSON.stringify(context);
-		s.createContextBranch(params, function (err, message) {
+		s.createContextBranch(params, function (err, response) {
 			should.not.exist(err);
-			message.should.equal("Branch created, Branch switched");
+			response.msg.should.equal("Branch created, Branch switched");
+			response.context.branchAncestor.should.equal('ancestorBranch');
 			mock.verify();
 			done();
 		});
 	});
-
 });
 
 describe('Method to save branch name', function () {
@@ -337,7 +306,7 @@ describe('Method to save branch name', function () {
 		});
 	});
 
-	it('should return info message when context was patched.', function (done) {
+	it('should return info message and modified context on success.', function (done) {
 		var branchName;
 
 		// expected branch name
@@ -349,36 +318,32 @@ describe('Method to save branch name', function () {
 			ticketId: 42
 		});
 
-		// mock call which saves branch name in context
-		mockSweetpServiceCall(params, 'project-context/patchContext', {
-			id: "contextId",
-			properties: JSON.stringify({
-				branchName: branchName
-			})
-		});
-
-		s.saveBranchName(params, function (err, message) {
+		s.saveBranchName(params, function (err, response) {
 			should.not.exist(err);
-			message.should.equal("Saved branch name '" + branchName + "' in context.");
+			response.msg.should.equal("Saved branch name '" + branchName + "' in context.");
+			response.context.branchName.should.equal(branchName);
 			done();
 		});
 	});
 
 	it('should do nothing when branch name already exists in context.', function (done) {
+		var branchName;
+
+		branchName = "myCustomizedBranchName";
 		// create fake context
 		params.context = JSON.stringify({
 			_id: "contextId",
 			ticketId: 42,
-			branchName: "myCustomizedBranchName"
+			branchName: branchName
 		});
 
-		s.saveBranchName(params, function (err, message) {
+		s.saveBranchName(params, function (err, response) {
 			should.not.exist(err);
-			message.should.equal("Nothing done, branch name already exists in context: 'myCustomizedBranchName'");
+			response.msg.should.equal("Nothing done, branch name already exists in context: '" + branchName + "'");
+			response.context.branchName.should.equal(branchName);
 			done();
 		});
 	});
-
 });
 
 describe('Method to switch to ancestor branch of context', function () {
@@ -427,6 +392,4 @@ describe('Method to switch to ancestor branch of context', function () {
 			done();
 		});
 	});
-
 });
-

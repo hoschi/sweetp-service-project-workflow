@@ -8,11 +8,6 @@ function  getCallService (sweetpServerUrl, projectName) {
 	return _.partial(sweetp.callService, sweetpServerUrl, projectName);
 }
 
-// get function to call a sweetp service, use params to get url and project name
-function getCallServiceFromParams (params) {
-	return getCallService(params.url, params.config.name);
-}
-
 // create callback with fixed success message
 function createSuccessCallbackForMessage (callback, message) {
 	// use only provided error, use fixed message as success value
@@ -56,37 +51,35 @@ function needsContextInParams (wrappedFunction) {
 	};
 }
 
-// patch context with supplied properties
-function patchContext (callService, contextId, properties, callback) {
-	var patchContextParams;
-
-	patchContextParams = {
-		id: contextId,
-		properties: JSON.stringify(properties)
-	};
-	callService("project-context/patchContext", patchContextParams, false, callback);
-}
-
 exports.saveBranchName = function (params, callback) {
-	var callService, branchName, patchedContextProperties;
+	var branchName, response;
 
 	if (!params.context.ticketId) {
 		return callback("Can't work without ticket id, there is no `ticketId` property in given context!");
 	}
 
+	response = {};
+
 	// don't override existing branch name, e.g. supplied by user
 	if (params.context.branchName) {
-		return callback(undefined, "Nothing done, branch name already exists in context: '" + params.context.branchName + "'");
+		response.msg = "Nothing done, branch name already exists in context: '" + params.context.branchName + "'";
+		response.context = params.context;
+		return callback(undefined, response);
 	}
 
 	// create branch name by static string + ticket id
 	branchName = 'feature/' + params.context.ticketId.toString();
-	patchedContextProperties = {
-		branchName: branchName
-	};
-	callService = getCallServiceFromParams(params);
-	// patch context with this new information
-	patchContext(callService, params.context._id, patchedContextProperties, createSuccessCallbackForMessage(callback, "Saved branch name '" + branchName + "' in context."));
+
+	// apply it to context
+	params.context.branchName = branchName;
+
+	// save message
+	response.msg = "Saved branch name '" + branchName + "' in context.";
+
+	// save modified context
+	response.context = params.context;
+
+	callback(undefined, response);
 };
 // add assertion
 exports.saveBranchName = needsContextInParams(exports.saveBranchName);
@@ -108,7 +101,7 @@ exports.createContextBranch = function (params, callback) {
 	steps.push(_.partial(exports.checkoutBranch, sweetpServerUrl, projectName, params.context));
 
 	async.series(steps, function (err, stepMessages) {
-		var message;
+		var response, message;
 		if (err) {
 			message = "Worked steps: ";
 			if (stepMessages) {
@@ -118,8 +111,10 @@ exports.createContextBranch = function (params, callback) {
 			return callback(err);
 		}
 
-		message = stepMessages.join(', ');
-		callback(undefined, message);
+		response = {};
+		response.msg = stepMessages.join(', ');
+		response.context = params.context;
+		callback(undefined, response);
 	});
 };
 // add assertion
@@ -130,17 +125,13 @@ exports.saveAncestor = function (sweetpServerUrl, projectName, context, callback
 
 	callService = getCallService(sweetpServerUrl, projectName);
 	callService("scm/branch/name", {}, false, function (err, branchName) {
-		var patchedContextProperties;
-
 		if (err) {
 			return callback(err);
 		}
 
-		patchedContextProperties = {
-			branchAncestor: branchName
-		};
+		context.branchAncestor = branchName;
 
-		patchContext(callService, context._id, patchedContextProperties, createSuccessCallbackForMessage(callback, "Ancestor branch '" + branchName + "' saved in context"));
+		callback(undefined, "Ancestor branch '" + branchName + "' saved in context");
 	});
 };
 
@@ -164,4 +155,3 @@ exports.checkoutBranchAncestor = function (params, callback) {
 };
 // add assertion
 exports.checkoutBranchAncestor = needsContextInParams(exports.checkoutBranchAncestor);
-
