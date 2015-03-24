@@ -52,8 +52,9 @@ describe('Method to create branch for context', function () {
 
 		branchName = 'feature/myTest24';
 		mockSweetpServiceCall(params, 'scm/branch/create', {
-			name: branchName,
-			force: false
+			force: false,
+			noErrorOnExisting: true,
+			name: branchName
 		}, true);
 
 		s.createBranch(params.url, params.config.name, {
@@ -70,8 +71,9 @@ describe('Method to create branch for context', function () {
 
 		branchName = 'feature/myTest24';
 		mockSweetpServiceCall(params, 'scm/branch/create', {
-			name: branchName,
-			force: false
+			force: false,
+			noErrorOnExisting: true,
+			name: branchName
 		});
 
 		s.createBranch(params.url, params.config.name, {
@@ -101,8 +103,8 @@ describe('Method to checkout branch for context', function () {
 
 		branchName = 'feature/myTest24';
 		mockSweetpServiceCall(params, 'scm/checkout', {
-			name: branchName,
-			force: false
+			force: false,
+			name: branchName
 		}, true);
 
 		s.checkoutBranch(params.url, params.config.name, {
@@ -119,8 +121,8 @@ describe('Method to checkout branch for context', function () {
 
 		branchName = 'feature/myTest24';
 		mockSweetpServiceCall(params, 'scm/checkout', {
-			name: branchName,
-			force: false
+			force: false,
+			name: branchName
 		});
 
 		s.checkoutBranch(params.url, params.config.name, {
@@ -381,8 +383,8 @@ describe('Method to switch to ancestor branch of context', function () {
 
 		// mock call which switch branches
 		mockSweetpServiceCall(params, 'scm/checkout', {
-			name: branchName,
-			force: false
+			force: false,
+			name: branchName
 		}, false);
 
 		s.checkoutBranchAncestor(params, function (err, message) {
