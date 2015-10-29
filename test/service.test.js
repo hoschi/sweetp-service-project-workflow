@@ -60,10 +60,10 @@ describe('Method to create branch for context', function () {
 		s.createBranch(params.url, params.config.name, {
 			branchName: branchName
 		}, function (err) {
-				err.message.should.contain("during call to service");
-				err.message.should.contain("scm/branch/create");
-				done();
-			});
+			err.message.should.contain("during call to service");
+			err.message.should.contain("scm/branch/create");
+			done();
+		});
 	});
 
 	it('should return info message when all went fine.', function (done) {
@@ -79,11 +79,11 @@ describe('Method to create branch for context', function () {
 		s.createBranch(params.url, params.config.name, {
 			branchName: branchName
 		}, function (err, message) {
-				should.not.exist(err);
-				message.should.contain(branchName);
-				message.should.match(/created if not already existed/);
-				done();
-			});
+			should.not.exist(err);
+			message.should.contain(branchName);
+			message.should.match(/created if not already existed/);
+			done();
+		});
 	});
 });
 
@@ -110,10 +110,10 @@ describe('Method to checkout branch for context', function () {
 		s.checkoutBranch(params.url, params.config.name, {
 			branchName: branchName
 		}, function (err) {
-				err.message.should.contain("during call to service");
-				err.message.should.contain("scm/checkout");
-				done();
-			});
+			err.message.should.contain("during call to service");
+			err.message.should.contain("scm/checkout");
+			done();
+		});
 	});
 
 	it('should return info message when all went fine.', function (done) {
@@ -128,11 +128,11 @@ describe('Method to checkout branch for context', function () {
 		s.checkoutBranch(params.url, params.config.name, {
 			branchName: branchName
 		}, function (err, message) {
-				should.not.exist(err);
-				message.should.contain(branchName);
-				message.should.match(/^Switched to branch/);
-				done();
-			});
+			should.not.exist(err);
+			message.should.contain(branchName);
+			message.should.match(/^Switched to branch/);
+			done();
+		});
 	});
 });
 
@@ -156,10 +156,10 @@ describe('Method to save ancestor branch name in context', function () {
 		s.saveAncestor(params.url, params.config.name, {
 			_id: "contextId",
 		}, function (err) {
-				err.message.should.contain("during call to service");
-				err.message.should.contain("scm/branch/name");
-				done();
-			});
+			err.message.should.contain("during call to service");
+			err.message.should.contain("scm/branch/name");
+			done();
+		});
 	});
 
 	it('should return info message when all went fine and save branch name in context.', function (done) {

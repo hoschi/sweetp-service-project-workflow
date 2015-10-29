@@ -4,7 +4,7 @@ var _ = require('lodash');
 var async = require('async');
 
 // get function to call a sweetp service
-function  getCallService (sweetpServerUrl, projectName) {
+function getCallService (sweetpServerUrl, projectName) {
 	return _.partial(sweetp.callService, sweetpServerUrl, projectName);
 }
 
